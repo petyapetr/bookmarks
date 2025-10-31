@@ -16,8 +16,8 @@
   "license": "0BSD",
   "packageManager": "pnpm@10.18.3",
   "dependencies": {
-    "eta": "^4.0.1",
-    "h3": "2.0.1-rc.5"
+    "h3": "2.0.1-rc.5",
+    "nunjucks": "^3.2.4"
   },
   "devDependencies": {
     "@types/node": "^24.9.2"

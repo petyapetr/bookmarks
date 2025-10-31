@@ -1,4 +1,0 @@
-<% layout("../layouts/base", it) %>
-
-<h1><%= it.text %></h1>
-<p>Text on a page</p>
