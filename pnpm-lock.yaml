@@ -8,12 +8,12 @@ importers:
 
   .:
     dependencies:
+      eta:
+        specifier: ^4.0.1
+        version: 4.0.1
       h3:
         specifier: 2.0.1-rc.5
         version: 2.0.1-rc.5
-      mustache:
-        specifier: ^4.2.0
-        version: 4.2.0
     devDependencies:
       '@types/node':
         specifier: ^24.9.2
@@ -24,6 +24,10 @@ packages:
   '@types/node@24.9.2':
     resolution: {integrity: sha512-uWN8YqxXxqFMX2RqGOrumsKeti4LlmIMIyV0lgut4jx7KQBcBiW6vkDtIBvHnHIquwNfJhk8v2OtmO8zXWHfPA==}
 
+  eta@4.0.1:
+    resolution: {integrity: sha512-0h0oBEsF6qAJU7eu9ztvJoTo8D2PAq/4FvXVIQA1fek3WOTe6KPsVJycekG1+g1N6mfpblkheoGwaUhMtnlH4A==}
+    engines: {node: '>=20'}
+
   h3@2.0.1-rc.5:
     resolution: {integrity: sha512-qkohAzCab0nLzXNm78tBjZDvtKMTmtygS8BJLT3VPczAQofdqlFXDPkXdLMJN4r05+xqneG8snZJ0HgkERCZTg==}
     engines: {node: '>=20.11.1'}
@@ -32,10 +36,6 @@ packages:
     peerDependenciesMeta:
       crossws:
         optional: true
-
-  mustache@4.2.0:
-    resolution: {integrity: sha512-71ippSywq5Yb7/tVYyGbkBggbU8H3u5Rz56fH60jGFgr8uHwxs+aSKeqmluIVzM0m0kB7xQjKS6qPfd0b2ZoqQ==}
-    hasBin: true
 
   rou3@0.7.9:
     resolution: {integrity: sha512-+JM7c8swGkoXkWRkIz7qpYN9Bls7Rj/vuSGaxtoKHIe8Ba1ci+mXnqzqtJFrXSbvEazNL9v83P2RiXae9NSbfQ==}
@@ -54,12 +54,12 @@ snapshots:
     dependencies:
       undici-types: 7.16.0
 
+  eta@4.0.1: {}
+
   h3@2.0.1-rc.5:
     dependencies:
       rou3: 0.7.9
       srvx: 0.9.4
-
-  mustache@4.2.0: {}
 
   rou3@0.7.9: {}
 

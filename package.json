@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch --env-file=.env src/server.js",
-    "start": "node --env-file=.env.prod src/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node --env-file=.env.prod src/server.js"
   },
   "keywords": [
     "h3",
@@ -17,8 +16,8 @@
   "license": "0BSD",
   "packageManager": "pnpm@10.18.3",
   "dependencies": {
-    "h3": "2.0.1-rc.5",
-    "mustache": "^4.2.0"
+    "eta": "^4.0.1",
+    "h3": "2.0.1-rc.5"
   },
   "devDependencies": {
     "@types/node": "^24.9.2"
