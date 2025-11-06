@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %} Table — Bookmarks App {% endblock %}
+{% block all %}{{ count.all }}{% endblock %} 
+{% block unread %}{{ count.unread }}{% endblock %}
+{% block content %}
+<main>
+	<p>
+		Query: <em>{{ query }}</em>	
+	</p>
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th style="white-space: pre">Read In</th>
+				<th class="width-auto">Note</th>
+				<th>Page</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for b in bookmarks %}
+			<tr>
+				<td>
+					<a href="{{ b.url }}#refer={{ b.id }}">{{ b.name }}</a>
+				</td>
+				<td>{{ b.read_in_month }} {{ b.read_in_year }}</td>
+				<td>{{ b.note }}</td>
+				<td>
+					<a href="/bookmarks/{{ b.id }}">Open</a>
+				</td>
+			</tr>
+			{% else %}
+			<p>Empty</p>
+			{% endfor %}
+		</tbody>
+	</table>
+</main>
+{% endblock %}

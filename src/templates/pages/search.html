@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %} Home — Bookmarks App {% endblock %}
+{% block all %}{{count.all}}{% endblock %}
+{% block unread %}{{count.unread}}{% endblock %}
+{% block content %}
+<main>
+	<h2>Query</h2>
+
+	<form action="/bookmarks" method="get">
+		<button type="submit">Search</button>
+		<div class="grid">
+			<input type="text" placeholder="Status:" disabled />
+			<input type="text" placeholder="Years:" disabled />
+			<input type="text" placeholder="Months:" disabled />
+			<input type="text" placeholder="Tags:" disabled style="flex-grow: 1" />
+		</div>
+		<div class="grid">
+			<fieldset>
+				<p></p>
+				<div>
+					<label>
+						<input type="checkbox" name="status" value="read" />
+						Read
+					</label>
+				</div>
+				<div>
+					<label>
+						<input type="checkbox" name="status" value="unread" checked />
+						Unread
+					</label>
+				</div>
+			</fieldset>
+			<fieldset>
+				{% for year in years %}
+				<div>
+					<label>
+						<input type="checkbox" value="{{ year }}" name="year:{{ year }}" />
+						{{ year }}
+					</label>
+				</div>
+				{% endfor %}
+			</fieldset>
+			<fieldset>
+				<div>
+					<label>
+						<input type="checkbox" value="1" name="month:1" />
+						Jan
+					</label>
+				</div>
+				<div>
+					<label>
+						<input type="checkbox" value="2" name="month:2" />
+						Feb
+					</label>
+				</div>
+				<div>
+					<label>
+						<input type="checkbox" value="3" name="month:3" />
+						Mar
+					</label>
+				</div>
+				<div>
+					<label>
+						<input type="checkbox" value="4" name="month:4" />
+						Apr
+					</label>
+				</div>
+				<div>
+					<label>
+						<input type="checkbox" value="5" name="month:5" />
+						May
+					</label>
+				</div>
+				<div>
+					<label>
+						<input type="checkbox" value="6" name="month:6" />
+						Jun
+					</label>
+				</div>
+				<div>
+					<label>
+						<input type="checkbox" value="7" name="month:7" />
+						Jul
+					</label>
+				</div>
+				<div>
+					<label>
+						<input type="checkbox" value="8" name="month:8" />
+						Aug
+					</label>
+				</div>
+				<div>
+					<label>
+						<input type="checkbox" value="9" name="month:9" />
+						Sep
+					</label>
+				</div>
+				<div>
+					<label>
+						<input type="checkbox" value="10" name="month:10" />
+						Oct
+					</label>
+				</div>
+				<div>
+					<label>
+						<input type="checkbox" value="11" name="month:11" />
+						Nov
+					</label>
+				</div>
+				<div>
+					<label>
+						<input type="checkbox" value="12" name="month:12" />
+						Dec
+					</label>
+				</div>
+			</fieldset>
+			<fieldset style="flex-grow: 1">
+				{% for tag in tags %}
+				<div>
+					<label>
+						<input type="checkbox" value="{{ tag }}" name="tag:{{ tag }}" />
+						{{ tag }}
+					</label>
+				</div>
+				{% else %}
+				<p>None</p>
+				{% endfor %}
+			</fieldset>
+		</div>
+	</form>
+</main>
+{% endblock %}

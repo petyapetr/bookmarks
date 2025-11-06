@@ -1,0 +1,12 @@
+{% extends "base.html" %} 
+{% block title %} {{ name }} — Bookmarks App {% endblock %}
+{% block all %}{{count.all}}{% endblock %} 
+{% block unread %}{{count.unread}}{% endblock %}
+{% block content %}
+<main>
+	<h2>{{ name }}</h2>
+	<p>
+		<a href="{{ url }}">Read →</a>
+	</p>
+</main>
+{% endblock %}

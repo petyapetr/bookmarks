@@ -1,0 +1,36 @@
+{% extends "base.html" %} 
+{% block title %} Home — Bookmarks App {% endblock %}
+{% block all %}{{count.all}}{% endblock %}
+{% block unread %}{{count.unread}}{% endblock %}
+{% block content %}
+<main>
+	<div>
+		<h2>Create</h2>
+		<form action="/bookmarks" method="post">
+			<p>Required fields:</p>
+			<div class="grid">
+				<label>
+					URL *
+					<input type="text" name="url" required placeholder="https://..." />
+				</label>
+				<label>
+					Title
+					<input type="text" name="name" placeholder="petr's blog" />
+				</label>
+			</div>
+			<p>Optional fields:</p>
+			<div class="grid">
+				<label>
+					Description
+					<input type="text" name="note" placeholder="About" />
+				</label>
+				<label>
+					Tags
+					<input type="text" name="tags" placeholder="blog, self-host, etc." />
+				</label>
+			</div>
+			<button type="submit">Create</button>
+		</form>
+	</div>
+</main>
+{% endblock %}

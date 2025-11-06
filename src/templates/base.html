@@ -9,10 +9,49 @@
 		<link rel="stylesheet" href="/public/index.css" />
 	</head>
 	<body>
+		<header>
+			<table class="header">
+				<tbody>
+					<tr>
+						<td rowspan="2" class="width-auto">
+							<h1>Bookmarks</h1>
+							<nav style="display: inline">
+								<a href="/">/home</a>
+								<a href="/search">/search</a>
+								<a href="/random">/random</a>
+							</nav>
+						</td>
+						<th style="white-space: pre">To Read:</th>
+						<td class="width-min">
+							<a href="/bookmarks?status=unread"
+								>{% block unread %}{% endblock %}</a
+							>
+						</td>
+					</tr>
+					<tr>
+						<th>All:</th>
+						<td class="width-min">
+							<a href="/bookmarks" style="white-space: pre"
+								>{% block all %}{% endblock %}</a
+							>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</header>
 		{% block content %}{% endblock %}
 		<footer>
 			<hr />
-			<em>site template: <a href="https://github.com/owickstrom/the-monospace-web/tree/main">monospace-web</a></em>
+			<div class="grid">
+				<p>
+					<em
+						>site template:
+						<a href="https://github.com/owickstrom/the-monospace-web/tree/main"
+							>monospace-web</a
+						></em
+					>
+				</p>
+			</div>
 		</footer>
 	</body>
 </html>
