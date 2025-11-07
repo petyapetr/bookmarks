@@ -1,20 +1,21 @@
 {
-  "useTabs": true,
-  "singleQuote": false,
-  "trailingComma": "es5",
-  "bracketSpacing": false,
-  "arrowParens": "always",
-  "semi": true,
-  "tabWidth": 2,
-  "printWidth": 80,
-  "htmlWhitespaceSensitivity": "css",
-  "plugins": ["prettier-plugin-jinja-template", "prettier-plugin-tailwindcss"],
-  "overrides": [
-    {
-      "files": ["*.html"],
-      "options": {
-        "parser": "jinja-template"
-      }
-    }
-  ]
+	"useTabs": true,
+	"singleQuote": false,
+	"trailingComma": "es5",
+	"bracketSpacing": false,
+	"arrowParens": "always",
+	"semi": true,
+	"tabWidth": 2,
+	"printWidth": 80,
+	"bracketSameLine": true,
+	"htmlWhitespaceSensitivity": "css",
+	"plugins": ["prettier-plugin-jinja-template", "prettier-plugin-tailwindcss"],
+	"overrides": [
+		{
+			"files": ["*.html"],
+			"options": {
+				"parser": "jinja-template"
+			}
+		}
+	]
 }
