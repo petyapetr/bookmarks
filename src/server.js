@@ -2,15 +2,10 @@ import {readFile, stat} from "node:fs/promises";
 import {join} from "node:path";
 import {H3, serve, serveStatic, redirect} from "h3";
 import {render} from "./renderer.js";
-import {
-	getOverallCount,
-	getUnreadCount,
-	getBookmarks,
-	getBookmark,
-	createBookmark,
-} from "./db.js";
+import DatabaseConnection from "./sqlite-driver.js";
 
 const app = new H3();
+const db = new DatabaseConnection(process.env.DB_FILE_URL);
 
 app.use("/public/**", (event) =>
 	serveStatic(event, {
@@ -29,12 +24,17 @@ app.use("/public/**", (event) =>
 	})
 );
 app.use("**", (e) => {
-	const all = getOverallCount();
-	const unread = getUnreadCount();
-	e.context.count = {all, unread};
+	const all = db.get("SELECT COUNT(*) as count FROM bookmarks;").count;
+	const unread = db.get(
+		"SELECT COUNT(*) as count FROM bookmarks WHERE read_in_year IS NULL;"
+	).count;
+	const random = Math.ceil(Math.random() * all);
+	e.context.template = {all, unread, random};
 });
 app.get("/", (e) => {
-	return render("pages/home.html", {count: e.context.count});
+	return render("pages/home.html", {
+		...e.context.template,
+	});
 });
 app.get("/search", (e) => {
 	const currentYear = new Date().getFullYear();
@@ -46,17 +46,23 @@ app.get("/search", (e) => {
 	return render("pages/search.html", {
 		years,
 		tags: ["code", "star", "work", "best", "gis", "blog"],
-		count: e.context.count,
+		...e.context.template,
 	});
 });
 app.get("/bookmarks", (e) => {
-	const bookmarks = getBookmarks();
-	console.log(bookmarks[0]);
+	const bookmarks = db.all(`
+    SELECT id,
+					 url,
+					 name,
+					 note,
+					 read_in_year, 
+					 read_in_month FROM bookmarks ORDER BY id DESC;
+  `);
 
 	return render("pages/bookmarks.html", {
-		count: e.context.count,
 		bookmarks,
-		query: 'None'
+		query: "None",
+		...e.context.template,
 	});
 });
 app.post("/bookmarks", async (e) => {
@@ -67,17 +73,47 @@ app.post("/bookmarks", async (e) => {
 	const name = body.get("name") ?? new URL(url).hostname;
 	const note = body.get("note");
 	const tags = body.get("tags")?.split(",");
-	const res = createBookmark(url, name, note, tags);
+	// const res = createBookmark(url, name, note, tags);
+	const insertBookmark = `
+    INSERT INTO bookmarks (url, name, note)
+    VALUES (?, ?, ?)
+  `;
+	const insertTag = `
+    INSERT OR IGNORE INTO tags (name)
+    VALUES (?)
+  `;
+	const linkBookmarkTag = `
+    INSERT INTO bookmark_tags (bookmark_id, tag_id)
+    VALUES (?, (SELECT id FROM tags WHERE name = ?))
+  `;
+	const res = db.transaction(() => {
+		const bookmark = db.run(insertBookmark, [url, name, note]);
+		const id = bookmark.lastInsertRowid;
+		tags.forEach((tag) => {
+			db.run(insertTag, [tag]);
+			db.run(linkBookmarkTag, [id, tag]);
+		});
+		return id;
+	})();
 	return redirect("/bookmarks/" + res);
 });
 app.get("/bookmarks/:id", (e) => {
 	const id = e.context.params.id;
 	// TODO: add error code
 	if (typeof (id * 1) !== "number") throw new Error("Not Allowed");
-	const data = getBookmark(id);
+	const data = db.get(
+		`SELECT id,
+						url,
+						name,
+						note,
+						read_in_year, 
+						read_in_month FROM bookmarks WHERE id = ?
+  `,
+		id
+	);
 	return render("pages/card.html", {
-		count: e.context.count,
 		...data,
+		...e.context.template,
 	});
 });
 
