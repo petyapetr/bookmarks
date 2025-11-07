@@ -2,31 +2,52 @@
 {% block title %}Home — Bookmarks App{% endblock %}
 {% block content %}
 	<section>
-		<h2 class="text-xl font-bold text-black">Create</h2>
-		<form action="/bookmarks" method="post">
-			<p>Required fields:</p>
-			<div class="grid">
-				<label>
-					URL *
-					<input type="text" name="url" required placeholder="https://..." />
-				</label>
-				<label>
-					Title
-					<input type="text" name="name" placeholder="petr's blog" />
-				</label>
-			</div>
-			<p>Optional fields:</p>
-			<div class="grid">
-				<label>
-					Description
-					<input type="text" name="note" placeholder="About" />
-				</label>
-				<label>
-					Tags
-					<input type="text" name="tags" placeholder="blog, self-host, etc." />
-				</label>
-			</div>
-			<button type="submit">Create</button>
+		<h2 class="mb-2 text-xl font-bold text-black">Create</h2>
+		<form action="/bookmarks" method="post" class="space-y-2">
+			<label class="block">
+				<span class="mb-1 block text-sm font-medium">URL *</span>
+				<input
+					type="text"
+					name="url"
+					required
+					placeholder="https://..."
+					class="w-full border border-gray-800 px-2 py-1 text-sm text-black placeholder-gray-400"
+				/>
+			</label>
+			<label class="block">
+				<span class="mb-1 block text-sm font-medium">Title</span>
+				<input
+					type="text"
+					name="name"
+					placeholder="petr's blog"
+					class="w-full border border-gray-800 px-2 py-1 text-sm text-black placeholder-gray-400"
+				/>
+			</label>
+			<label class="block">
+				<span class="mb-1 block text-sm font-medium">Description</span>
+				<input
+					type="text"
+					name="note"
+					placeholder="About"
+					class="w-full border border-gray-800 px-2 py-1 text-sm text-black placeholder-gray-400"
+				/>
+			</label>
+			<label class="block">
+				<span class="mb-1 block text-sm font-medium">Tags</span>
+				<input
+					type="text"
+					name="tags"
+					placeholder="blog, self-host, etc."
+					class="w-full border border-gray-800 px-2 py-1 text-sm text-black placeholder-gray-400"
+				/>
+			</label>
+
+			<button
+				type="submit"
+				class="mt-4 border border-gray-800 px-4 py-2 text-sm font-semibold text-black hover:bg-gray-100"
+			>
+				Create
+			</button>
 		</form>
 	</section>
 {% endblock %}
