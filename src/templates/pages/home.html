@@ -1,11 +1,8 @@
-{% extends "base.html" %} 
-{% block title %} Home — Bookmarks App {% endblock %}
-{% block all %}{{count.all}}{% endblock %}
-{% block unread %}{{count.unread}}{% endblock %}
+{% extends "base.html" %}
+{% block title %}Home — Bookmarks App{% endblock %}
 {% block content %}
-<main>
-	<div>
-		<h2>Create</h2>
+	<section>
+		<h2 class="text-xl font-bold text-black">Create</h2>
 		<form action="/bookmarks" method="post">
 			<p>Required fields:</p>
 			<div class="grid">
@@ -31,6 +28,5 @@
 			</div>
 			<button type="submit">Create</button>
 		</form>
-	</div>
-</main>
+	</section>
 {% endblock %}

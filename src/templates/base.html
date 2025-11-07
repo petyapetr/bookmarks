@@ -1,57 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>{% block title %}Bookmarks App{% endblock %}</title>
 		<meta name="description" content="Link hoarding limbo" />
-		<link rel="stylesheet" href="/public/reset.css" />
-		<link rel="stylesheet" href="/public/index.css" />
+		<link
+			rel="stylesheet"
+			href="https://cdn.html-first.com/litewind-2.0.1.css"
+		/>
+		<link rel="stylesheet" href="public/style.css" />
 	</head>
-	<body>
-		<header>
-			<table class="header">
-				<tbody>
-					<tr>
-						<td rowspan="2" class="width-auto">
-							<h1>Bookmarks</h1>
-							<nav style="display: inline">
-								<a href="/">/home</a>
-								<a href="/search">/search</a>
-								<a href="/random">/random</a>
-							</nav>
-						</td>
-						<th style="white-space: pre">To Read:</th>
-						<td class="width-min">
-							<a href="/bookmarks?status=unread"
-								>{% block unread %}{% endblock %}</a
-							>
-						</td>
-					</tr>
-					<tr>
-						<th>All:</th>
-						<td class="width-min">
-							<a href="/bookmarks" style="white-space: pre"
-								>{% block all %}{% endblock %}</a
-							>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</header>
-		{% block content %}{% endblock %}
-		<footer>
-			<hr />
-			<div class="grid">
-				<p>
-					<em
-						>site template:
-						<a href="https://github.com/owickstrom/the-monospace-web/tree/main"
-							>monospace-web</a
-						></em
+	<body
+		class="mx-auto flex min-h-dvh max-w-2xl flex-col gap-4 px-4 py-6 font-sans text-gray-800"
+	>
+		<header class="flex items-end justify-between border">
+			<div class="flex-1 border-r px-4 pt-1 pb-2 text-black">
+				<h1 class="text-2xl font-bold">
+					<a href="/">Bookmarks</a>
+				</h1>
+				<nav class="flex gap-2 underline underline-offset-1">
+					<a href="/search">/search</a>
+					<a href="/bookmarks/{{ random }}">/random</a>
+				</nav>
+			</div>
+			<div class="space-y-1 px-4 pb-2 text-sm">
+				<p class="flex justify-between gap-2">
+					<span class="font-semibold">Unread:</span>
+					<a
+						href="/bookmarks?status=unread"
+						class="text-black underline underline-offset-1"
+						>{{ unread }}</a
+					>
+				</p>
+				<p class="flex justify-between gap-2">
+					<span class="font-semibold">All:</span>
+					<a
+						href="/bookmarks"
+						class="whitespace-pre text-black underline underline-offset-1"
+						>{{ all }}</a
 					>
 				</p>
 			</div>
+		</header>
+		<main class="grow px-4">{% block content %}{% endblock %}</main>
+		<footer>
+			<hr />
+			<p class="px-4 pt-4">yo</p>
 		</footer>
 	</body>
 </html>

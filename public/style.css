@@ -1,0 +1,13 @@
+@layer utilities {
+  .underline-offset-1 {
+    text-underline-offset: calc(var(--spacing));
+  }
+
+  .min-h-dvh {
+    min-height: 100dvh;
+  }
+
+	.grow {
+		flex-grow: 1;
+	}
+}
