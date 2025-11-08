@@ -116,14 +116,28 @@ app.get("/bookmarks/:id", (e) => {
 		...e.context.template,
 	});
 });
+// NOTE: should be PUT though
+app.post("/bookmarks/:id", async (e) => {
+	const body = await e.req.formData();
+	const {name, url, note, read_in_month, read_in_year} = Object.fromEntries(
+		body.entries()
+	);
+	db.run(
+		`UPDATE bookmarks
+    SET name = ?, url = ?, note = ?, read_in_month = ?, read_in_year = ?
+		WHERE id = ?`,
+		[name, url, note, read_in_month, read_in_year, e.context.params.id]
+	);
+	return redirect("/bookmarks/" + e.context.params.id);
+});
 app.post("/bookmarks/:id/mark-read", (e) => {
 	const date = new Date();
 	const read_in_year = date.getFullYear();
 	const read_in_month = date.getMonth() + 1;
 	db.run(
 		`UPDATE bookmarks
-		 SET read_in_year = ?, read_in_month = ?
-		 WHERE id = ?`,
+		SET read_in_year = ?, read_in_month = ?
+		WHERE id = ?`,
 		[read_in_year, read_in_month, e.context.params.id]
 	);
 	return redirect("/bookmarks/" + e.context.params.id);
