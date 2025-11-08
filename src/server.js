@@ -90,8 +90,8 @@ app.post("/bookmarks", async (e) => {
 		const bookmark = db.run(insertBookmark, [url, name, note]);
 		const id = bookmark.lastInsertRowid;
 		tags.forEach((tag) => {
-			db.run(insertTag, [tag]);
-			db.run(linkBookmarkTag, [id, tag]);
+			db.run(insertTag, tag);
+			db.run(linkBookmarkTag, id, tag);
 		});
 		return id;
 	})();
@@ -120,13 +120,18 @@ app.get("/bookmarks/:id", (e) => {
 app.post("/bookmarks/:id", async (e) => {
 	const body = await e.req.formData();
 	const {name, url, note, read_in_month, read_in_year} = Object.fromEntries(
-		body.entries()
+		body.entries().map(([_, val]) => [_, !val ? null : val])
 	);
 	db.run(
 		`UPDATE bookmarks
     SET name = ?, url = ?, note = ?, read_in_month = ?, read_in_year = ?
 		WHERE id = ?`,
-		[name, url, note, read_in_month, read_in_year, e.context.params.id]
+		name,
+		url,
+		note,
+		read_in_month,
+		read_in_year,
+		e.context.params.id
 	);
 	return redirect("/bookmarks/" + e.context.params.id);
 });
@@ -138,9 +143,24 @@ app.post("/bookmarks/:id/mark-read", (e) => {
 		`UPDATE bookmarks
 		SET read_in_year = ?, read_in_month = ?
 		WHERE id = ?`,
-		[read_in_year, read_in_month, e.context.params.id]
+		read_in_year,
+		read_in_month,
+		e.context.params.id
 	);
 	return redirect("/bookmarks/" + e.context.params.id);
+});
+// NOTE: should be DELETE, htmx has a point tbh
+app.post("/bookmarks/:id/delete", (e) => {
+	const {id} = e.context.params;
+	db.transaction(() => {
+		db.run(`DELETE FROM bookmark_tags WHERE bookmark_id = ?`, id);
+		db.run(`
+			DELETE from tags WHERE id NOT IN (
+				SELECT DISTINCT tag_id FROM bookmark_tags
+			)`);
+		db.run(`DELETE FROM bookmarks WHERE id = ?`, id);
+	})();
+	return redirect("/bookmarks");
 });
 
 serve(app, {port: process.env.PORT || 3000});

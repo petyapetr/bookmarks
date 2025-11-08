@@ -35,7 +35,7 @@
 
 		<hr class="my-6 border-double border-gray-800" />
 
-		<form action="/bookmarks/{{ id }}" method="post" class="space-y-4">
+		<form action="/bookmarks/{{ id }}" method="post" class="space-y-4 mb-4">
 			<label class="block text-xs font-semibold text-gray-600"
 				>Title
 				<input
@@ -89,18 +89,18 @@
 				</label>
 			</div>
 
-			<div class="flex gap-2 pt-4">
-				<button
-					type="submit"
-					class="border border-gray-800 px-4 py-2 text-sm font-semibold text-black hover:bg-gray-100">
-					Save
-				</button>
-				<button
-					type="button"
-					class="border border-gray-800 px-4 py-2 text-sm font-semibold text-black hover:bg-gray-100">
-					Delete
-				</button>
-			</div>
+			<button
+				type="submit"
+				class="border border-gray-800 px-4 py-2 text-sm font-semibold text-black hover:bg-gray-100">
+				Save
+			</button>
+		</form>
+		<form action="/bookmarks/{{ id }}/delete" method="post">
+			<button
+				type="submit"
+				class="border border-gray-800 px-4 py-2 text-sm font-semibold text-black hover:bg-gray-100">
+				Delete
+			</button>
 		</form>
 	</section>
 {% endblock %}
