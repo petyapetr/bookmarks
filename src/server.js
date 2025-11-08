@@ -51,13 +51,13 @@ app.get("/search", (e) => {
 });
 app.get("/bookmarks", (e) => {
 	const bookmarks = db.all(`
-    SELECT id,
-					 url,
-					 name,
-					 note,
-					 read_in_year, 
-					 read_in_month FROM bookmarks ORDER BY id DESC;
-  `);
+			SELECT id,
+						url,
+						name,
+						note,
+						read_in_year, 
+						read_in_month FROM bookmarks ORDER BY id DESC;
+		`);
 
 	return render("pages/bookmarks.html", {
 		bookmarks,
@@ -75,17 +75,17 @@ app.post("/bookmarks", async (e) => {
 	const tags = body.get("tags")?.split(",");
 	// const res = createBookmark(url, name, note, tags);
 	const insertBookmark = `
-    INSERT INTO bookmarks (url, name, note)
-    VALUES (?, ?, ?)
-  `;
+			INSERT INTO bookmarks (url, name, note)
+			VALUES (?, ?, ?)
+		`;
 	const insertTag = `
-    INSERT OR IGNORE INTO tags (name)
-    VALUES (?)
-  `;
+			INSERT OR IGNORE INTO tags (name)
+			VALUES (?)
+		`;
 	const linkBookmarkTag = `
-    INSERT INTO bookmark_tags (bookmark_id, tag_id)
-    VALUES (?, (SELECT id FROM tags WHERE name = ?))
-  `;
+			INSERT INTO bookmark_tags (bookmark_id, tag_id)
+			VALUES (?, (SELECT id FROM tags WHERE name = ?))
+		`;
 	const res = db.transaction(() => {
 		const bookmark = db.run(insertBookmark, [url, name, note]);
 		const id = bookmark.lastInsertRowid;
@@ -103,18 +103,30 @@ app.get("/bookmarks/:id", (e) => {
 	if (typeof (id * 1) !== "number") throw new Error("Not Allowed");
 	const data = db.get(
 		`SELECT id,
-						url,
-						name,
-						note,
-						read_in_year, 
-						read_in_month FROM bookmarks WHERE id = ?
-  `,
+							url,
+							name,
+							note,
+							read_in_year, 
+							read_in_month FROM bookmarks WHERE id = ?
+		`,
 		id
 	);
 	return render("pages/card.html", {
 		...data,
 		...e.context.template,
 	});
+});
+app.post("/bookmarks/:id/mark-read", (e) => {
+	const date = new Date();
+	const read_in_year = date.getFullYear();
+	const read_in_month = date.getMonth() + 1;
+	db.run(
+		`UPDATE bookmarks
+		 SET read_in_year = ?, read_in_month = ?
+		 WHERE id = ?`,
+		[read_in_year, read_in_month, e.context.params.id]
+	);
+	return redirect("/bookmarks/" + e.context.params.id);
 });
 
 serve(app, {port: process.env.PORT || 3000});
