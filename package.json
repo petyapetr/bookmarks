@@ -4,7 +4,9 @@
 	"description": "Personal Bookmarks Lib",
 	"type": "module",
 	"scripts": {
-		"dev": "node --watch --env-file=.env src/server.js",
+		"dev:uno": "pnpm exec unocss --watch 'src/templates/**/*.html' -o 'public/uno.css' -c 'uno.config.js'",
+		"dev:node": "node --watch --env-file=.env src/server.js",
+		"dev": "pnpm run \"/dev:/\"",
 		"start": "node --env-file=.env.prod src/server.js"
 	},
 	"keywords": [
@@ -22,9 +24,12 @@
 	},
 	"devDependencies": {
 		"@types/node": "^24.9.2",
+		"@unocss/cli": "^66.5.5",
+		"@unocss/preset-mini": "^66.5.5",
 		"prettier": "3.6.2",
 		"prettier-plugin-jinja-template": "^2.1.0",
-		"prettier-plugin-tailwindcss": "^0.7.1"
+		"prettier-plugin-tailwindcss": "^0.7.1",
+		"unocss": "^66.5.5"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
