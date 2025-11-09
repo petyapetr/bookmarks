@@ -7,7 +7,7 @@
 	<section class="mb-4">
 		<div class="mt-2 mb-4 flex flex-wrap items-center justify-between gap-4">
 			<h2
-				class="text-xl font-bold text-black underline-offset-1 hover:underline">
+				class="text-xl font-bold text-black underline-offset-2 hover:underline">
 				<a href="{{ url }}?ref={{ id }}">{{ name }}</a>
 			</h2>
 			{% if not read_in_year %}
@@ -33,39 +33,42 @@
 			</div>
 		{% endif %}
 
-		<hr class="my-6 border-double border-gray-800" />
+		<div class="my-6 space-y-px">
+			<hr class="border-gray-800" />
+			<hr class="border-gray-800" />
+		</div>
 
-		<form action="/bookmarks/{{ id }}" method="post" class="space-y-4 mb-4">
-			<label class="block text-xs font-semibold text-gray-600"
+		<form action="/bookmarks/{{ id }}" method="post" class="mb-4 space-y-4">
+			<label class="block text-xs font-semibold"
 				>Title
 				<input
 					type="text"
 					name="name"
 					value="{{ name }}"
-					class="w-full border-b border-gray-800 bg-transparent p-2 text-sm text-gray-700" />
+					class="w-full border-b border-gray-800 bg-transparent p-2 text-sm" />
 			</label>
 
-			<label class="block text-xs font-semibold text-gray-600"
+			<label class="block text-xs font-semibold"
 				>URL
 				<input
 					type="text"
 					name="url"
 					value="{{ url }}"
-					class="w-full border-b border-gray-800 bg-transparent p-2 text-sm text-gray-700" />
+					class="w-full border-b border-gray-800 bg-transparent p-2 text-sm" />
 			</label>
 
-			<label class="block text-xs font-semibold text-gray-600"
+			<label class="block text-xs font-semibold"
 				>Note
 				<textarea
 					name="note"
 					rows="10"
-					class="w-full border-b border-gray-800 bg-transparent p-2 text-sm text-gray-700">
+					class="w-full border-b border-gray-800 bg-transparent p-2 text-sm">
 {{ note }}</textarea
 				>
 			</label>
 
 			<div class="flex gap-4 pt-2">
-				<label class="block flex-1 text-xs font-semibold text-gray-600"
+				<label class="block flex-1 text-xs font-semibold"
 					>Month
 					<input
 						type="number"
@@ -74,9 +77,9 @@
 						min="1"
 						max="12"
 						placeholder="1-12"
-						class="w-full border-b border-gray-800 bg-transparent p-2 text-sm text-gray-700" />
+						class="w-full border-b border-gray-800 bg-transparent p-2 text-sm" />
 				</label>
-				<label class="block flex-1 text-xs font-semibold text-gray-600"
+				<label class="block flex-1 text-xs font-semibold"
 					>Year
 					<input
 						type="number"
@@ -85,7 +88,7 @@
 						min="1970"
 						max="2125"
 						placeholder="2025"
-						class="w-full border-b border-gray-800 bg-transparent p-2 text-sm text-gray-700" />
+						class="w-full border-b border-gray-800 bg-transparent p-2 text-sm" />
 				</label>
 			</div>
 
