@@ -1,11 +1,19 @@
 import {readFile, stat} from "node:fs/promises";
 import {join} from "node:path";
-import {H3, serve, serveStatic, redirect} from "h3";
-import {render} from "./renderer.js";
+import nunjucks from "nunjucks";
+import {H3, serve, serveStatic, html, redirect} from "h3";
 import DatabaseConnection from "./sqlite-driver.js";
 
 const app = new H3();
 const db = new DatabaseConnection(process.env.DB_FILE_URL);
+const njk = new nunjucks.Environment(
+	new nunjucks.FileSystemLoader("src/templates")
+);
+function render(path, data) {
+	const content = njk.render(path, data);
+
+	return html(content);
+}
 
 app.use("/public/**", (event) =>
 	serveStatic(event, {
