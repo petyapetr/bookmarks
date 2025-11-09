@@ -5,38 +5,40 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>{% block title %}Bookmarks App{% endblock %}</title>
 		<meta name="description" content="Link hoarding limbo" />
-		<link rel="stylesheet" href="/public/style.css">
+		<link rel="stylesheet" href="/public/style.css" />
 	</head>
 	<body
 		class="mx-auto flex min-h-dvh max-w-2xl flex-col gap-4 px-4 py-6 font-mono text-gray-800">
-		<header class="flex items-end justify-between border">
-			<div class="flex-1 border-r px-4 pt-1 pb-2 text-black">
+		<header
+			class="grid grid-cols-[1fr_auto] grid-rows-2 items-center justify-between border">
+			<div class="row-span-2 border-r px-4 pt-1 pb-2 text-black">
 				<h1 class="text-2xl font-bold">
 					<a href="/" class="underline-offset-2 hover:underline">Bookmarks</a>
 				</h1>
-				<nav class="flex gap-2 underline underline-offset-2">
+				<nav class="flex gap-4 underline underline-offset-2">
+					<a href="/bookmarks">/all</a>
 					<a href="/search">/search</a>
 					<a href="/bookmarks/{{ random }}">/random</a>
 				</nav>
 			</div>
-			<div class="space-y-1 px-4 pb-2 text-sm">
-				<p class="flex justify-between gap-2">
-					<span class="font-semibold">Unread:</span>
-					<a
-						href="/bookmarks?status=unread"
-						class="text-black underline underline-offset-2"
-						>{{ unread }}</a
-					>
-				</p>
-				<p class="flex justify-between gap-2">
-					<span class="font-semibold">All:</span>
-					<a
-						href="/bookmarks"
-						class="whitespace-pre text-black underline underline-offset-2"
-						>{{ all }}</a
-					>
-				</p>
-			</div>
+			<p
+				class="grid h-full grid-flow-col items-center gap-2 border-b px-4 text-sm">
+				<span class="font-semibold">Unread:</span>
+				<a
+					href="/bookmarks?status=unread"
+					class="text-black underline underline-offset-2"
+					>{{ unread }}</a
+				>
+			</p>
+			<p
+				class="col-start-2 row-start-2 flex justify-between gap-2 px-4 text-sm">
+				<span class="font-semibold">All:</span>
+				<a
+					href="/bookmarks"
+					class="whitespace-pre text-black underline underline-offset-2"
+					>{{ all }}</a
+				>
+			</p>
 		</header>
 		<main class="grow px-4">{% block content %}{% endblock %}</main>
 		<footer>
