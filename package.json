@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev:tw": "pnpm exec tailwindcss --watch -i src/input.css -o public/style.css",
-		"dev:node": "node --watch --env-file=.env src/server.js",
+		"dev:node": "node --watch --watch-path=src/templates --env-file=.env src/server.js",
 		"dev": "pnpm run \"/dev:/\"",
 		"start": "node --env-file=.env.prod src/server.js"
 	},
