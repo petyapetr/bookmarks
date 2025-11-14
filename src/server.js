@@ -1,7 +1,7 @@
 import {readFile, stat} from "node:fs/promises";
 import {join} from "node:path";
 import nunjucks from "nunjucks";
-import {H3, serve, serveStatic, html, redirect} from "h3";
+import {H3, serve, serveStatic, html, redirect, HTTPError} from "h3";
 import DatabaseConnection from "./sqlite-driver.js";
 
 const MONTHS = new Map([
@@ -184,7 +184,6 @@ app.post("/bookmarks", async (e) => {
 	const name = body.get("name") ?? new URL(url).hostname;
 	const note = body.get("note");
 	const tags = body.get("tags")?.split(",");
-	// const res = createBookmark(url, name, note, tags);
 	const insertBookmark = `
 			INSERT INTO bookmarks (url, name, note)
 			VALUES (?, ?, ?)
@@ -211,7 +210,7 @@ app.post("/bookmarks", async (e) => {
 app.get("/bookmarks/:id", (e) => {
 	const id = e.context.params.id;
 	// TODO: add error code
-	if (typeof (id * 1) !== "number") throw new Error("Not Allowed");
+	if (isNaN(id * 1)) throw new HTTPError("Not Allowed");
 	const data = db.get(
 		`SELECT id,
 							url,
