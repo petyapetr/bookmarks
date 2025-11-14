@@ -58,18 +58,76 @@ app.get("/search", (e) => {
 	});
 });
 app.get("/bookmarks", (e) => {
-	const bookmarks = db.all(`
-			SELECT id,
-						url,
-						name,
-						note,
-						read_in_year, 
-						read_in_month FROM bookmarks ORDER BY id DESC;
-		`);
+	const query = new URL(`http://localhost${e.node.req.url}`);
+	const params = query.searchParams;
+
+	let sql = `
+		SELECT DISTINCT
+			b.id,
+			b.url,
+			b.name,
+			b.note,
+			b.read_in_year,
+			b.read_in_month
+		FROM bookmarks b
+		LEFT JOIN bookmark_tags bt ON b.id = bt.bookmark_id
+		LEFT JOIN tags t ON bt.tag_id = t.id
+		WHERE 1=1
+	`;
+
+	const queryParams = [];
+
+	const statuses = new Set(params.getAll("statuses"));
+	const years = [...new Set(params.getAll("years"))];
+	const months = [...new Set(params.getAll("months"))];
+	const tags = [...new Set(params.getAll("tags"))];
+
+	if (statuses.has("read")) {
+		if (years.length === 0) {
+			sql += ` AND b.read_in_year IS NOT NULL`;
+		} else {
+			const yearPlaceholders = createPlaceholders(years.length);
+			sql += ` AND b.read_in_year IN (${yearPlaceholders})`;
+			queryParams.push(...years);
+		}
+		if (months.size > 0) {
+			const monthPlaceholders = createPlaceholders(months.length);
+			sql += ` AND b.read_in_month IN (${monthPlaceholders})`;
+			queryParams.push(...months);
+		}
+	}
+
+	if (statuses.has("unread")) {
+		if (years.length === 0) {
+			sql += ` AND b.read_in_year IS NULL`;
+		} else {
+			const yearPlaceholders = createPlaceholders(years.length);
+			sql += ` AND strftime("%Y", b.created_at) IN (${yearPlaceholders})`;
+			queryParams.push(...years);
+		}
+
+		if (months.size > 0) {
+			const monthPlaceholders = createPlaceholders(months.length);
+			sql += ` AND strftime("%m", b.created_at) IN (${monthPlaceholders})`;
+			queryParams.push(...months);
+		}
+	}
+
+	if (tags.length > 0) {
+		const tagPlaceholders = createPlaceholders(tags.length);
+		sql += ` AND t.name IN (${tagPlaceholders})`;
+		queryParams.push(...tags);
+		sql += ` GROUP BY b.id HAVING COUNT(DISTINCT t.id) = ?`;
+		queryParams.push(tags.length);
+	}
+
+	sql += ` ORDER BY b.id DESC`;
+
+	const bookmarks = db.prepare(sql).all(...queryParams);
 
 	return render("pages/bookmarks.html", {
 		bookmarks,
-		query: "None",
+		query: params.toString(),
 		...e.context.template,
 	});
 });
@@ -170,5 +228,13 @@ app.post("/bookmarks/:id/delete", (e) => {
 	})();
 	return redirect("/bookmarks");
 });
+
+function createPlaceholders(size) {
+	let result = "";
+	for (let i = 0; i < size; i++) {
+		result += i > 0 ? ",?" : "?";
+	}
+	return result;
+}
 
 serve(app, {port: process.env.PORT || 3000});
