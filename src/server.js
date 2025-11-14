@@ -4,7 +4,26 @@ import nunjucks from "nunjucks";
 import {H3, serve, serveStatic, html, redirect} from "h3";
 import DatabaseConnection from "./sqlite-driver.js";
 
-const app = new H3();
+const MONTHS = new Map([
+	["01", "Jan"],
+	["02", "Feb"],
+	["03", "Mar"],
+	["04", "Apr"],
+	["05", "May"],
+	["06", "Jun"],
+	["07", "Jul"],
+	["08", "Aug"],
+	["09", "Sep"],
+	["10", "Oct"],
+	["11", "Nov"],
+	["12", "Dec"],
+]);
+
+const app = new H3({
+	onError: (error) => {
+		console.log(error);
+	},
+});
 const db = new DatabaseConnection(process.env.DB_FILE_URL);
 const njk = new nunjucks.Environment(
 	new nunjucks.FileSystemLoader("src/templates")
@@ -58,9 +77,13 @@ app.get("/search", (e) => {
 	});
 });
 app.get("/bookmarks", (e) => {
-	const query = new URL(`http://localhost${e.node.req.url}`);
+	const query = new URL(e.req.url);
 	const params = query.searchParams;
-
+	const queryParams = [];
+	const statuses = new Set(params.getAll("statuses"));
+	const years = [...new Set(params.getAll("years"))];
+	const months = [...new Set(params.getAll("months"))];
+	const tags = [...new Set(params.getAll("tags"))];
 	let sql = `
 		SELECT DISTINCT
 			b.id,
@@ -69,47 +92,60 @@ app.get("/bookmarks", (e) => {
 			b.note,
 			b.read_in_year,
 			b.read_in_month
-		FROM bookmarks b
-		LEFT JOIN bookmark_tags bt ON b.id = bt.bookmark_id
-		LEFT JOIN tags t ON bt.tag_id = t.id
+		FROM bookmarks b ${tags.length > 0 ? " LEFT JOIN bookmark_tags bt ON b.id = bt.bookmark_id \nLEFT JOIN tags t ON bt.tag_id = t.id" : ""}
 		WHERE 1=1
 	`;
 
-	const queryParams = [];
-
-	const statuses = new Set(params.getAll("statuses"));
-	const years = [...new Set(params.getAll("years"))];
-	const months = [...new Set(params.getAll("months"))];
-	const tags = [...new Set(params.getAll("tags"))];
-
+	let statusClause = [];
 	if (statuses.has("read")) {
-		if (years.length === 0) {
-			sql += ` AND b.read_in_year IS NOT NULL`;
-		} else {
-			const yearPlaceholders = createPlaceholders(years.length);
-			sql += ` AND b.read_in_year IN (${yearPlaceholders})`;
-			queryParams.push(...years);
-		}
-		if (months.size > 0) {
-			const monthPlaceholders = createPlaceholders(months.length);
-			sql += ` AND b.read_in_month IN (${monthPlaceholders})`;
-			queryParams.push(...months);
-		}
+		statusClause.push("(b.read_in_year IS NOT NULL)");
 	}
 
 	if (statuses.has("unread")) {
-		if (years.length === 0) {
-			sql += ` AND b.read_in_year IS NULL`;
-		} else {
-			const yearPlaceholders = createPlaceholders(years.length);
-			sql += ` AND strftime("%Y", b.created_at) IN (${yearPlaceholders})`;
+		statusClause.push("(b.read_in_year IS NULL)");
+	}
+
+	if (statusClause.length > 0) {
+		sql += ` AND ${statusClause.length > 1 ? `(${statusClause.join(" OR ")})` : statusClause[0]}`;
+	}
+
+	if (years.length > 0) {
+		const yearPlaceholders = createPlaceholders(years.length);
+		let yearClause = [];
+
+		if (statuses.has("read")) {
+			yearClause.push(`b.read_in_year IN (${yearPlaceholders})`);
 			queryParams.push(...years);
 		}
 
-		if (months.size > 0) {
-			const monthPlaceholders = createPlaceholders(months.length);
-			sql += ` AND strftime("%m", b.created_at) IN (${monthPlaceholders})`;
+		if (statuses.has("unread")) {
+			yearClause.push(`strftime('%Y', b.created_at) IN (${yearPlaceholders})`);
+			queryParams.push(...years);
+		}
+
+		if (yearClause.length > 0) {
+			sql += ` AND (${yearClause.join(" OR ")})`;
+		}
+	}
+
+	if (months.length > 0) {
+		const monthPlaceholders = createPlaceholders(months.length);
+		let monthClause = [];
+
+		if (statuses.has("read")) {
+			monthClause.push(`b.read_in_month IN (${monthPlaceholders})`);
 			queryParams.push(...months);
+		}
+
+		if (statuses.has("unread")) {
+			monthClause.push(
+				`strftime('%m', b.created_at) IN (${monthPlaceholders})`
+			);
+			queryParams.push(...months);
+		}
+
+		if (monthClause.length > 0) {
+			sql += ` AND (${monthClause.join(" OR ")})`;
 		}
 	}
 
@@ -123,10 +159,19 @@ app.get("/bookmarks", (e) => {
 
 	sql += ` ORDER BY b.id DESC`;
 
-	const bookmarks = db.prepare(sql).all(...queryParams);
+	// TODO: add flat error handling
+	let bookmarks;
+	try {
+		bookmarks = db.prepare(sql).all(...queryParams);
+	} catch (e) {
+		throw new HTTPError(e.message);
+	}
 
 	return render("pages/bookmarks.html", {
-		bookmarks,
+		bookmarks: bookmarks.map((b) => ({
+			...b,
+			read_in: `${b.read_in_month ? MONTHS.get(b.read_in_month) + " " : ""}${b.read_in_year ? b.read_in_year : ""}`,
+		})),
 		query: params.toString(),
 		...e.context.template,
 	});

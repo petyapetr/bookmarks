@@ -192,9 +192,6 @@
   .isolate {
     isolation: isolate;
   }
-  .z-10 {
-    z-index: 10;
-  }
   .col-start-2 {
     grid-column-start: 2;
   }
@@ -252,11 +249,23 @@
   .flex-1 {
     flex: 1;
   }
-  .flex-grow {
-    flex-grow: 1;
-  }
   .grow {
     flex-grow: 1;
+  }
+  .cursor-context-menu {
+    cursor: context-menu;
+  }
+  .cursor-copy {
+    cursor: copy;
+  }
+  .cursor-default {
+    cursor: default;
+  }
+  .cursor-help {
+    cursor: help;
+  }
+  .cursor-none {
+    cursor: none;
   }
   .grid-flow-col {
     grid-auto-flow: column;
@@ -418,9 +427,6 @@
     --tw-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
   }
-  .break-all {
-    word-break: break-all;
-  }
   .whitespace-break-spaces {
     white-space: break-spaces;
   }
@@ -459,13 +465,6 @@
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-gray-100);
-      }
-    }
-  }
-  .hover\:no-underline {
-    &:hover {
-      @media (hover: hover) {
-        text-decoration-line: none;
       }
     }
   }
