@@ -1,37 +1,70 @@
 {% extends "base.html" %}
-{% block title %} Table — Bookmarks App {% endblock %}
-{% block all %}{{ count.all }}{% endblock %} 
-{% block unread %}{{ count.unread }}{% endblock %}
+{% set title = "Bookmarks" %}
 {% block content %}
-<main>
-	<p>
-		Query: <em>{{ query }}</em>	
-	</p>
-	<table>
-		<thead>
-			<tr>
-				<th>Name</th>
-				<th style="white-space: pre">Read In</th>
-				<th class="width-auto">Note</th>
-				<th>Page</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for b in bookmarks %}
-			<tr>
-				<td>
-					<a href="{{ b.url }}#refer={{ b.id }}">{{ b.name }}</a>
-				</td>
-				<td>{{ b.read_in_month }} {{ b.read_in_year }}</td>
-				<td>{{ b.note }}</td>
-				<td>
-					<a href="/bookmarks/{{ b.id }}">Open</a>
-				</td>
-			</tr>
-			{% else %}
-			<p>Empty</p>
-			{% endfor %}
-		</tbody>
-	</table>
-</main>
+	<section>
+		<h2 class="mb-4 text-xl font-bold text-black">Bookmarks List</h2>
+
+		{% if query %}
+			<div class="mb-4 border border-gray-800 bg-gray-50 px-4 py-2">
+				<p class="text-xs text-gray-600">
+					<span class="font-semibold">Query:</span>
+					{{ query }}
+				</p>
+			</div>
+		{% endif %}
+
+		{% if bookmarks.length > 0 %}
+			<div class="border border-gray-800">
+				<table class="w-full">
+					<thead class="border-b border-gray-800 bg-gray-50">
+						<tr>
+							<th class="px-4 py-2 text-left text-sm font-semibold text-black">
+								Title
+							</th>
+							<th class="px-4 py-2 text-left text-sm font-semibold text-black">
+								Read
+							</th>
+							<th
+								class="hidden px-4 py-2 text-left text-sm font-semibold text-black lg:table-cell">
+								Note
+							</th>
+						</tr>
+					</thead>
+					<tbody class="divide-y divide-gray-800">
+						{% for bookmark in bookmarks %}
+							<tr class="relative isolate even:bg-gray-50 hover:bg-gray-100">
+								<td class="px-4 py-2 align-top">
+									<a
+										class="absolute inset-0"
+										href="/bookmarks/{{ bookmark.id }}">
+									</a>
+									<span
+										class="text-sm font-medium underline underline-offset-2">
+										{{ bookmark.name or bookmark.url }}
+									</span>
+								</td>
+								<td class="px-4 py-2 align-top font-mono text-xs text-gray-600">
+									{{ bookmark.read_in or "—" }}
+								</td>
+								<td
+									class="hidden px-4 py-2 align-top text-xs text-gray-600 lg:table-cell">
+									<p class="max-w-xs whitespace-break-spaces">
+										{{- bookmark.note or "—" -}}
+									</p>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+			<p class="mt-4 text-xs text-gray-600">
+				{{ bookmarks.length }}
+				bookmark{{ "s" if bookmarks.length != 1 else "" }}
+			</p>
+		{% else %}
+			<div class="border border-gray-800 px-4 py-6 text-center">
+				<p class="text-sm text-gray-600">No bookmarks found</p>
+			</div>
+		{% endif %}
+	</section>
 {% endblock %}
