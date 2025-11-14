@@ -1,132 +1,92 @@
 {% extends "base.html" %}
-{% block title %} Home — Bookmarks App {% endblock %}
-{% block all %}{{count.all}}{% endblock %}
-{% block unread %}{{count.unread}}{% endblock %}
+{% set title = "Search" %}
 {% block content %}
-<main>
-	<h2>Query</h2>
+	<section>
+		<h2 class="mb-4 text-xl font-bold text-black">Search Bookmarks</h2>
 
-	<form action="/bookmarks" method="get">
-		<button type="submit">Search</button>
-		<div class="grid">
-			<input type="text" placeholder="Status:" disabled />
-			<input type="text" placeholder="Years:" disabled />
-			<input type="text" placeholder="Months:" disabled />
-			<input type="text" placeholder="Tags:" disabled style="flex-grow: 1" />
-		</div>
-		<div class="grid">
-			<fieldset>
-				<p></p>
-				<div>
-					<label>
-						<input type="checkbox" name="status" value="read" />
-						Read
+		<form action="/bookmarks" method="get" class="space-y-4">
+			<fieldset class="space-y-2">
+				<legend class="font-semibold text-black">Status</legend>
+				<div class="flex flex-wrap gap-4">
+					<label class="flex items-center gap-2">
+						<input
+							type="checkbox"
+							name="statuses"
+							value="read"
+							class="border border-gray-800" />
+						<span>Read</span>
 					</label>
-				</div>
-				<div>
-					<label>
-						<input type="checkbox" name="status" value="unread" checked />
-						Unread
-					</label>
-				</div>
-			</fieldset>
-			<fieldset>
-				{% for year in years %}
-				<div>
-					<label>
-						<input type="checkbox" value="{{ year }}" name="year:{{ year }}" />
-						{{ year }}
-					</label>
-				</div>
-				{% endfor %}
-			</fieldset>
-			<fieldset>
-				<div>
-					<label>
-						<input type="checkbox" value="1" name="month:1" />
-						Jan
-					</label>
-				</div>
-				<div>
-					<label>
-						<input type="checkbox" value="2" name="month:2" />
-						Feb
-					</label>
-				</div>
-				<div>
-					<label>
-						<input type="checkbox" value="3" name="month:3" />
-						Mar
-					</label>
-				</div>
-				<div>
-					<label>
-						<input type="checkbox" value="4" name="month:4" />
-						Apr
-					</label>
-				</div>
-				<div>
-					<label>
-						<input type="checkbox" value="5" name="month:5" />
-						May
-					</label>
-				</div>
-				<div>
-					<label>
-						<input type="checkbox" value="6" name="month:6" />
-						Jun
-					</label>
-				</div>
-				<div>
-					<label>
-						<input type="checkbox" value="7" name="month:7" />
-						Jul
-					</label>
-				</div>
-				<div>
-					<label>
-						<input type="checkbox" value="8" name="month:8" />
-						Aug
-					</label>
-				</div>
-				<div>
-					<label>
-						<input type="checkbox" value="9" name="month:9" />
-						Sep
-					</label>
-				</div>
-				<div>
-					<label>
-						<input type="checkbox" value="10" name="month:10" />
-						Oct
-					</label>
-				</div>
-				<div>
-					<label>
-						<input type="checkbox" value="11" name="month:11" />
-						Nov
-					</label>
-				</div>
-				<div>
-					<label>
-						<input type="checkbox" value="12" name="month:12" />
-						Dec
+					<label class="flex items-center gap-2">
+						<input
+							type="checkbox"
+							name="statuses"
+							value="unread"
+							class="border border-gray-800" />
+						<span>Unread</span>
 					</label>
 				</div>
 			</fieldset>
-			<fieldset style="flex-grow: 1">
-				{% for tag in tags %}
-				<div>
-					<label>
-						<input type="checkbox" value="{{ tag }}" name="tag:{{ tag }}" />
-						{{ tag }}
-					</label>
+
+			<fieldset class="space-y-2">
+				<legend class="font-semibold text-black">Year</legend>
+				<div class="flex flex-wrap gap-4">
+					{% for year in years %}
+						<label class="flex items-center gap-2">
+							<input
+								type="checkbox"
+								name="years"
+								value="{{ year }}"
+								class="border border-gray-800" />
+							<span>{{ year }}</span>
+						</label>
+					{% endfor %}
 				</div>
-				{% else %}
-				<p>None</p>
-				{% endfor %}
 			</fieldset>
-		</div>
-	</form>
-</main>
+
+			<fieldset class="space-y-2">
+				<legend class="font-semibold text-black">Month</legend>
+				<div class="flex flex-wrap gap-4">
+					{% for month in [{value: "01", name: "Jan"}, {value: "02", name: "Feb"}, {value: "03", name: "Mar"}, {value: "04", name: "Apr"}, {value: "05", name: "May"}, {value: "06", name: "Jun"}, {value: "07", name: "Jul"}, {value: "08", name: "Aug"}, {value: "09", name: "Sep"}, {value: "10", name: "Oct"}, {value: "11", name: "Nov"}, {value: "12", name: "Dec"}] %}
+						<label class="flex items-center gap-2">
+							<input
+								type="checkbox"
+								name="months"
+								value="{{ month.value }}"
+								class="border border-gray-800" />
+							<span>{{ month.name }}</span>
+						</label>
+					{% endfor %}
+				</div>
+			</fieldset>
+
+			<fieldset class="space-y-2">
+				<legend class="font-semibold text-black">Tags</legend>
+				<div class="flex flex-wrap gap-4">
+					{% for tag in tags %}
+						<label class="flex items-center gap-2">
+							<input
+								type="checkbox"
+								name="tags"
+								value="{{ tag }}"
+								class="border border-gray-800" />
+							<span>{{ tag }}</span>
+						</label>
+					{% endfor %}
+				</div>
+			</fieldset>
+
+			<div class="flex gap-2 pt-2">
+				<button
+					type="submit"
+					class="border border-gray-800 px-4 py-2 font-semibold text-black hover:bg-gray-100">
+					Search
+				</button>
+				<a
+					href="/search"
+					class="border border-gray-800 px-4 py-2 font-semibold text-black hover:bg-gray-100">
+					Reset
+				</a>
+			</div>
+		</form>
+	</section>
 {% endblock %}
