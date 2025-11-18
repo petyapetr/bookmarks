@@ -1,7 +1,16 @@
 import {readFile, stat} from "node:fs/promises";
 import {join} from "node:path";
 import nunjucks from "nunjucks";
-import {H3, serve, serveStatic, html, redirect, HTTPError} from "h3";
+import {
+	H3,
+	serve,
+	serveStatic,
+	html,
+	redirect,
+	HTTPError,
+	setCookie,
+	getCookie,
+} from "h3";
 import DatabaseConnection from "./sqlite-driver.js";
 
 const MONTHS = new Map([
@@ -58,6 +67,30 @@ app.use("**", (e) => {
 	const random = Math.ceil(Math.random() * all);
 	e.context.template = {all, unread, random};
 });
+app.use("**", (e) => {
+	if (e.url.pathname === "/login") return;
+	const isAuthenticated = getCookie(e, "authenticated");
+	if (!isAuthenticated) return redirect("/login");
+});
+app.get("/login", () => {
+	return render("pages/login.html");
+});
+app.post("/login", async (e) => {
+	const body = await e.req.formData();
+	const password = body.get("password");
+
+	if (password === process.env.ADMIN_PASSWORD) {
+		setCookie(e, "authenticated", "true", {
+			maxAge: 60 * 60 * 24 * 30,
+			httpOnly: true,
+			secure: true,
+			sameSite: "Strict",
+		});
+		return redirect("/");
+	}
+
+	return redirect("/login");
+});
 app.get("/", (e) => {
 	return render("pages/home.html", {
 		...e.context.template,
@@ -66,13 +99,17 @@ app.get("/", (e) => {
 app.get("/search", (e) => {
 	const currentYear = new Date().getFullYear();
 	const years = [];
-	for (let year = 2024; year <= currentYear; year++) {
+	for (let year = 2023; year <= currentYear; year++) {
 		years.push(year);
 	}
+	const tags = db
+		.all(`SELECT DISTINCT name FROM tags`)
+		.map((t) => t.name)
+		.filter((tag) => !!tag);
 
 	return render("pages/search.html", {
 		years,
-		tags: ["code", "star", "work", "best", "gis", "blog"],
+		tags,
 		...e.context.template,
 	});
 });
@@ -213,16 +250,26 @@ app.get("/bookmarks/:id", (e) => {
 	if (isNaN(id * 1)) throw new HTTPError("Not Allowed");
 	const data = db.get(
 		`SELECT id,
-							url,
-							name,
-							note,
-							read_in_year, 
-							read_in_month FROM bookmarks WHERE id = ?
-		`,
+						url,
+						name,
+						note,
+						read_in_year, 
+						read_in_month 
+		FROM bookmarks 
+		WHERE id = ?`,
 		id
 	);
+	const tags = db
+		.all(
+			`SELECT name FROM tags WHERE id = (SELECT tag_id FROM bookmark_tags WHERE bookmark_id = ?)`,
+			id
+		)
+		.map((t) => t.name)
+		.filter((tag) => !!tag);
+
 	return render("pages/card.html", {
 		...data,
+		tags,
 		...e.context.template,
 	});
 });

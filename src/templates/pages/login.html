@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Login — Bookmarks App</title>
+		<meta name="description" content="Link hoarding limbo" />
+		<link rel="stylesheet" href="/public/style.css" />
+	</head>
+	<body class="min-h-dvh pt-16">
+		<form method="post" action="/login" class="mx-auto max-w-xs space-y-4">
+			<h1 class="text-2xl font-bold">Bookmarks</h1>
+			<input
+				type="password"
+				name="password"
+				placeholder="Enter password"
+				required
+				autofocus
+				class="w-full border border-gray-800 px-2 py-1" />
+			<button
+				type="submit"
+				class="w-full border border-gray-800 px-4 py-2 font-semibold hover:bg-gray-100">
+				Login
+			</button>
+		</form>
+	</body>
+</html>
