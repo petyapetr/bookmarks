@@ -8,7 +8,7 @@
 		<div class="mt-2 mb-4 flex flex-wrap items-center justify-between gap-4">
 			<h2
 				class="text-xl font-bold text-black underline-offset-2 hover:underline">
-				<a href="{{ url }}?ref={{ id }}">{{ name }}</a>
+				<a href="{{ url }}#?ref={{ id }}">{{ name }}</a>
 			</h2>
 			{% if not read_in_year %}
 				<form action="/bookmarks/{{ id }}/mark-read" method="post">
