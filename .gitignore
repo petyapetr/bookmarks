@@ -7,3 +7,4 @@
 scripts
 db/bookmarks.db-wal
 db/bookmarks.db-shm
+public/style.css
