@@ -207,7 +207,7 @@ app.get("/bookmarks", (e) => {
 	return render("pages/bookmarks.html", {
 		bookmarks: bookmarks.map((b) => ({
 			...b,
-			read_in: `${b.read_in_month ? MONTHS.get(b.read_in_month) + " " : ""}${b.read_in_year ? b.read_in_year : ""}`,
+			read_in: `${b.read_in_month ? MONTHS.get(String(b.read_in_month).padStart(2, "0")) + " " : ""}${b.read_in_year ? b.read_in_year : ""}`,
 		})),
 		query: params.toString(),
 		...e.context.template,
